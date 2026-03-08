@@ -1,0 +1,75 @@
+CREATE TABLE Cliente(
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+email VARCHAR(20),
+numero VARCHAR(20)
+);
+
+CREATE TABLE area_do_usuario(
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+cliente_id INTEGER,
+localizacao VARCHAR(100),
+nome VARCHAR(200),
+numero_de_telefone VARCHAR(20),
+cep CHAR(9),
+rua_avenida VARCHAR(100),
+numero_de_casa INT,
+FOREIGN KEY (cliente_id) REFERENCES Cliente(id)
+);
+
+CREATE TABLE produtos(
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+nome VARCHAR(500),
+valor DECIMAL(6,2),
+tamanho INT,
+categoria VARCHAR(100),
+cor VARCHAR(100)
+);
+
+CREATE TABLE estoque(
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+produto_id INTEGER,
+quantidade INT,
+FOREIGN KEY (produto_id) REFERENCES produtos(id)
+);
+
+CREATE TABLE estoque_relatorio(
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+produto_id INTEGER,
+entrada_de_mercadoria DATE,
+saida_para_troca DATE,
+saida_venda DATE,
+registro_movimentacao VARCHAR(500),
+FOREIGN KEY (produto_id) REFERENCES produtos(id)
+);
+
+CREATE TABLE forma_de_pagamento(
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+tipo_de_pagamento VARCHAR(20)
+);
+
+CREATE TABLE pedidos(
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+cliente_id INTEGER,
+pagamento_id INTEGER,
+subtotal DECIMAL(6,2),
+frete DECIMAL(6,2),
+FOREIGN KEY (cliente_id) REFERENCES Cliente(id),
+FOREIGN KEY (pagamento_id) REFERENCES forma_de_pagamento(id)
+);
+
+CREATE TABLE itens_pedido(
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+pedido_id INTEGER,
+produto_id INTEGER,
+quantidade INT,
+preco DECIMAL(6,2),
+FOREIGN KEY (pedido_id) REFERENCES pedidos(id),
+FOREIGN KEY (produto_id) REFERENCES produtos(id)
+);
+
+CREATE TABLE filtro_de_cor(
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+produto_id INTEGER,
+cor VARCHAR(50),
+FOREIGN KEY (produto_id) REFERENCES produtos(id)
+);
