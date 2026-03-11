@@ -222,7 +222,7 @@ FROM pedidos
 JOIN Cliente
 ON pedidos.cliente_id = Cliente.id;
 
-SELECT pedidos.id, produtos.nome, itens_pedidos.preco
-FROM itens_pedidos
-JOIN produtos ON itens_pedidos.produto_id = produtos.id
-JOIN pedidos ON itens_pedidos.pedidos_id = pedidos.id;
+SELECT pedidos.id, produtos.nome, itens_pedido.preco
+FROM itens_pedido
+JOIN produtos ON itens_pedido.produto_id = produtos.id
+JOIN pedidos ON itens_pedido.pedido_id = pedidos.id;
