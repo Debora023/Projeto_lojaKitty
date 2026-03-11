@@ -17,20 +17,18 @@ FOREIGN KEY (cliente_id) REFERENCES Cliente(id)
 );
 
 CREATE TABLE categoria(
-  Blusa VARCHAR(500),
-  saia VARCHAR(500),
-  vestido VARCHAR(500),
-  acessorio VARCHAR(500),
-  calca VARCHAR(500)
-  );
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  nome VARCHAR(100) NOT NULL UNIQUE
+);
   
 CREATE TABLE produtos(
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-nome VARCHAR(500),
-valor DECIMAL(6,2),
-tamanho INT,
-categoria VARCHAR(100),
-cor VARCHAR(100)
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  nome VARCHAR(500) NOT NULL,
+  valor DECIMAL(6,2) NOT NULL,
+  tamanho INT,
+  categoria_id INTEGER NOT NULL,
+  cor VARCHAR(100),
+  FOREIGN KEY (categoria_id) REFERENCES categoria(id)
 );
 
 CREATE TABLE estoque(
@@ -110,19 +108,25 @@ VALUES
 (9,'Guarulhos - SP','Fernanda','21993456789','07034-020','Rua Nova Esperança',9),
 (10,'Rio de Janeiro - RJ','Joana','11990001122','22793-060','Rua das Palmeiras',88);
 
-
-INSERT INTO produtos (nome, valor, tamanho, categoria, cor)
+INSERT INTO categoria (nome)
 VALUES
-('StreetHx Camiseta Manga Longa Y2K',79.90,42,'Roupas','Preto'),
-('Tênis Adidas',299.90,41,'Calçados','Branco'),
-('Boné New Era',129.90,0,'Acessórios','Preto'),
-('Coolane Camiseta Futebol Vintage',49.90,44,'Roupas','Azul'),
-('Tênis Vans Old Skool',349.90,40,'Calçados','Preto'),
-('Coolane Camiseta Cropped Vintage',89.90,46,'Roupas','Branco'),
-('Coolane Camiseta Brasil',199.90,48,'Roupas','Cinza'),
-('Chinelo Havaianas',49.90,39,'Calçados','Azul'),
-('Coolane Camisa Baseball Y2K',179.90,42,'Roupas','Azul'),
-('Tênis Jordan',899.90,43,'Calçados','Vermelho');
+('Roupas'),
+('Calçados'),
+('Acessórios');
+
+
+INSERT INTO produtos (nome, valor, tamanho, categoria_id, cor)
+VALUES
+('StreetHx Camiseta Manga Longa Y2K',79.90,42,1,'Preto'),
+('Tênis Adidas',299.90,41,2,'Branco'),
+('Boné New Era',129.90,0,3,'Preto'),
+('Coolane Camiseta Futebol Vintage',49.90,44,1,'Azul'),
+('Tênis Vans Old Skool',349.90,40,2,'Preto'),
+('Coolane Camiseta Cropped Vintage',89.90,46,1,'Branco'),
+('Coolane Camiseta Brasil',199.90,48,1,'Cinza'),
+('Chinelo Havaianas',49.90,39,2,'Azul'),
+('Coolane Camisa Baseball Y2K',179.90,42,1,'Azul'),
+('Tênis Jordan',899.90,43,2,'Vermelho');
 
 INSERT INTO estoque (produto_id, quantidade)
 VALUES
@@ -209,9 +213,11 @@ FROM area_do_usuario
 GROUP BY localizacao;
 
 
-SELECT nome, categoria
-FROM produtos
-WHERE categoria = 'Roupas';
+SELECT p.nome, c.nome AS categoria
+FROM produtos p
+JOIN categoria c ON p.categoria_id = c.id
+WHERE c.nome = 'Roupas';
+
 
 SELECT *
 FROM pedidos
