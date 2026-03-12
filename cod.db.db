@@ -18,7 +18,8 @@ FOREIGN KEY (cliente_id) REFERENCES Cliente(id)
 
 CREATE TABLE categoria(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  nome VARCHAR(100) NOT NULL UNIQUE
+  nome VARCHAR(100) NOT NULL UNIQUE,
+  descricao VARCHAR(500) NOT NULL UNIQUE
 );
   
 CREATE TABLE produtos(
@@ -79,6 +80,19 @@ produto_id INTEGER,
 cor VARCHAR(50),
 FOREIGN KEY (produto_id) REFERENCES produtos(id)
 );
+
+CREATE TABLE fornecedor(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  nome VARCHAR (100)
+  
+
+);
+
+
+
+
+
+
 
 INSERT INTO Cliente (email, numero)
 VALUES
@@ -199,8 +213,18 @@ VALUES
 (10,'Vermelho');
 
 
-SELECT *
-FROM Cliente;
+SELECT c.email, c.numero AS Cliente
+FROM Cliente c;
+
+
+
+
+
+
+
+
+
+
 
 
 SELECT nome, valor
@@ -216,7 +240,7 @@ GROUP BY localizacao;
 SELECT p.nome, c.nome AS categoria
 FROM produtos p
 JOIN categoria c ON p.categoria_id = c.id
-WHERE c.nome = 'Roupas';
+WHERE c.nome = 'Saia' OR c.nome = 'Vestido' OR c.nome = 'acessórios' or c.nome = 'Calças' OR c.nome = 'Calçados';
 
 
 SELECT *
