@@ -1,27 +1,27 @@
 CREATE TABLE Cliente(
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-email VARCHAR(20) UNIQUE,
-numero VARCHAR(20) UNIQUE
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  email VARCHAR(100) UNIQUE,
+  numero VARCHAR(20) UNIQUE
 );
 
 CREATE TABLE area_do_usuario(
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-cliente_id INTEGER,
-localizacao VARCHAR(100),
-nome VARCHAR(200),
-numero_de_telefone VARCHAR(20),
-cep CHAR(9),
-rua_avenida VARCHAR(100),
-numero_de_casa INT,
-FOREIGN KEY (cliente_id) REFERENCES Cliente(id)
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  cliente_id INTEGER,
+  localizacao VARCHAR(100),
+  nome VARCHAR(200),
+  numero_de_telefone VARCHAR(20),
+  cep CHAR(9),
+  rua_avenida VARCHAR(100),
+  numero_de_casa INT,
+  FOREIGN KEY (cliente_id) REFERENCES Cliente(id)
 );
 
 CREATE TABLE categoria(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   nome VARCHAR(100) NOT NULL UNIQUE,
-  descricao VARCHAR(500) NOT NULL UNIQUE
+  descricao VARCHAR(500)
 );
-  
+
 CREATE TABLE produtos(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   nome VARCHAR(500) NOT NULL,
@@ -32,79 +32,86 @@ CREATE TABLE produtos(
   FOREIGN KEY (categoria_id) REFERENCES categoria(id)
 );
 
+CREATE TABLE usuario_adm (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  senha CHAR(8) NOT NULL,
+  estoque_id INTEGER,
+  estoque_relatorio_id INTEGER
+);
+
 CREATE TABLE estoque(
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-produto_id INTEGER,
-quantidade INT,
-FOREIGN KEY (produto_id) REFERENCES produtos(id)
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  produto_id INTEGER,
+  usuario_adm_id INTEGER,
+  quantidade INT,
+  FOREIGN KEY (produto_id) REFERENCES produtos(id),
+  FOREIGN KEY (usuario_adm_id) REFERENCES usuario_adm(id)
 );
 
 CREATE TABLE estoque_relatorio(
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-produto_id INTEGER,
-entrada_de_mercadoria DATE,
-saida_para_troca DATE,
-saida_venda DATE,
-registro_movimentacao VARCHAR(500),
-FOREIGN KEY (produto_id) REFERENCES produtos(id)
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  produto_id INTEGER,
+  usuario_adm_id INTEGER,
+  entrada_de_mercadoria DATE,
+  saida_para_troca DATE,
+  saida_venda DATE,
+  registro_movimentacao VARCHAR(500),
+  FOREIGN KEY (produto_id) REFERENCES produtos(id),
+  FOREIGN KEY (usuario_adm_id) REFERENCES usuario_adm(id)
 );
 
 CREATE TABLE forma_de_pagamento(
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-tipo_de_pagamento VARCHAR(20)
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  tipo_de_pagamento VARCHAR(20)
+);
+
+CREATE TABLE status_pedido (
+  id INTEGER PRIMARY KEY,
+  codigo TEXT UNIQUE NOT NULL
+    CHECK (codigo IN ('pendente', 'pago', 'separação', 'enviado', 'entregue', 'cancelado'))
 );
 
 CREATE TABLE pedidos(
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-cliente_id INTEGER,
-pagamento_id INTEGER,
-subtotal DECIMAL(6,2),
-frete DECIMAL(6,2),
-status_id INTEGER NOT NULL DEFAULT 1,
-FOREIGN KEY (cliente_id) REFERENCES Cliente(id),
-FOREIGN KEY (pagamento_id) REFERENCES forma_de_pagamento(id),
-FOREIGN KEY (status_id) REFERENCES status_pedido(id)
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  cliente_id INTEGER,
+  pagamento_id INTEGER,
+  subtotal DECIMAL(6,2),
+  frete DECIMAL(6,2),
+  status_id INTEGER NOT NULL DEFAULT 1,
+  FOREIGN KEY (cliente_id) REFERENCES Cliente(id),
+  FOREIGN KEY (pagamento_id) REFERENCES forma_de_pagamento(id),
+  FOREIGN KEY (status_id) REFERENCES status_pedido(id)
 );
 
 CREATE TABLE itens_pedido(
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-pedido_id INTEGER,
-produto_id INTEGER,
-quantidade INT,
-preco DECIMAL(6,2),
-FOREIGN KEY (pedido_id) REFERENCES pedidos(id),
-FOREIGN KEY (produto_id) REFERENCES produtos(id)
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  pedido_id INTEGER,
+  produto_id INTEGER,
+  quantidade INT,
+  preco DECIMAL(6,2),
+  FOREIGN KEY (pedido_id) REFERENCES pedidos(id),
+  FOREIGN KEY (produto_id) REFERENCES produtos(id)
 );
 
 CREATE TABLE filtro_de_cor(
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-produto_id INTEGER,
-cor VARCHAR(50),
-FOREIGN KEY (produto_id) REFERENCES produtos(id)
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  produto_id INTEGER,
+  cor VARCHAR(50),
+  FOREIGN KEY (produto_id) REFERENCES produtos(id)
 );
 
 CREATE TABLE fornecedor(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  nome_empresa VARCHAR (100),
-  cnpj CHAR (18),
-  telefone VARCHAR (12),
-  email VARCHAR (100),
+  nome_empresa VARCHAR(100),
+  cnpj CHAR(18),
+  telefone VARCHAR(12),
+  email VARCHAR(100),
   endereco VARCHAR(200),
   cidade VARCHAR(100),
-  estado VARCHAR (50),
-  cep CHAR (9)
+  estado VARCHAR(50),
+  cep CHAR(9)
 );
-
-CREATE TABLE IF NOT EXISTS status_pedido (
-  id INTEGER PRIMARY KEY,
-  codigo TEXT UNIQUE NOT NULL
-    CHECK (codigo IN ('pendente', 'pago', 'separacao', 'enviado', 'entregue', 'cancelado'))
-);
-
-
-
-
-
 
 INSERT INTO Cliente (email, numero)
 VALUES
@@ -118,7 +125,6 @@ VALUES
 ('carolina@email.com','11996655443'),
 ('fernanda@gmail.com','21993456789'),
 ('joana@email.com','11990001122');
-
 
 INSERT INTO area_do_usuario
 (cliente_id, localizacao, nome, numero_de_telefone, cep, rua_avenida, numero_de_casa)
@@ -136,10 +142,11 @@ VALUES
 
 INSERT INTO categoria (nome)
 VALUES
-('Roupas'),
+('vestidos'),
+('Calça'),
+('Saia'),
 ('Calçados'),
 ('Acessórios');
-
 
 INSERT INTO produtos (nome, valor, tamanho, categoria_id, cor)
 VALUES
@@ -154,6 +161,11 @@ VALUES
 ('Coolane Camisa Baseball Y2K',179.90,42,1,'Azul'),
 ('Tênis Jordan',899.90,43,2,'Vermelho');
 
+INSERT INTO usuario_adm (email, senha, estoque_id, estoque_relatorio_id)
+VALUES
+('admin1@empresa.com', 'abc12345', 1, 10),
+('admin2@empresa.com', 'zxcv6789', 2, 20);
+
 INSERT INTO estoque (produto_id, quantidade)
 VALUES
 (1,1),
@@ -167,7 +179,6 @@ VALUES
 (9,1),
 (10,1);
 
-
 INSERT INTO estoque_relatorio
 (produto_id, entrada_de_mercadoria, saida_para_troca, saida_venda, registro_movimentacao)
 VALUES
@@ -177,13 +188,16 @@ VALUES
 (4,'2026-01-16',NULL,'2026-01-22','Venda realizada'),
 (5,'2026-01-18',NULL,NULL,'Produto está no fornecedor');
 
-
 INSERT INTO forma_de_pagamento (tipo_de_pagamento)
-VALUES
-('Cartão de Crédito'),
-('Cartão de Débito'),
-('Pix'),
-('Boleto');
+VALUES ('Cartão de Crédito'),('Cartão de Débito'),('Pix'),('Boleto');
+
+INSERT INTO status_pedido (id, codigo) VALUES
+(1, 'pendente'),
+(2, 'pago'),
+(3, 'separação'),
+(4, 'enviado'),
+(5, 'entregue'),
+(6, 'cancelado');
 
 INSERT INTO pedidos (cliente_id, pagamento_id, subtotal, frete)
 VALUES
@@ -197,14 +211,6 @@ VALUES
 (8,2,49.90,5.00),
 (9,1,249.90,19.00),
 (10,3,899.90,26.00);
-
-INSERT OR IGNORE INTO status_pedido (id, codigo) VALUES
-(1, 'pendente'),
-(2, 'pago'),
-(3, 'separacao'),
-(4, 'enviado'),
-(5, 'entregue'),
-(6, 'cancelado')
 
 INSERT INTO itens_pedido (pedido_id, produto_id, quantidade, preco)
 VALUES
@@ -232,36 +238,26 @@ VALUES
 (9,'Azul'),
 (10,'Vermelho');
 
+INSERT INTO fornecedor ( nome_empresa, cnpj, telefone, email, endereco, cidade, estado, cep)
+VALUES
+('Tech Supply LTDA', '12.345.678/0001-90', '11987654321', 'contato@techsupply.com', 'Rua das Flores, 123', 'São Paulo', 'SP', '01001-000'),
+('Distribuidora Alfa', '98.765.432/0001-10', '21999887766', 'vendas@alfa.com.br', 'Av. Central, 500', 'Rio de Janeiro', 'RJ', '20040-020');
 
 SELECT c.email, c.numero AS Cliente
 FROM Cliente c;
 
-
-
-
-
-
-
-
-
-
-
-
 SELECT nome, valor
 FROM produtos
-WHERE valor > 100;
-
+WHERE valor > 500.00;
 
 SELECT localizacao, COUNT(*) AS total
 FROM area_do_usuario
 GROUP BY localizacao;
 
-
 SELECT p.nome, c.nome AS categoria
 FROM produtos p
 JOIN categoria c ON p.categoria_id = c.id
-WHERE c.nome = 'Saia' OR c.nome = 'Vestido' OR c.nome = 'acessórios' or c.nome = 'Calças' OR c.nome = 'Calçados';
-
+WHERE c.nome IN ('Saia', 'vestidos', 'Acessórios', 'Calça', 'Calçados');
 
 SELECT *
 FROM pedidos
@@ -269,10 +265,23 @@ WHERE frete > 20;
 
 SELECT Cliente.email, pedidos.subtotal, pedidos.frete
 FROM pedidos
-JOIN Cliente
-ON pedidos.cliente_id = Cliente.id;
+JOIN Cliente ON pedidos.cliente_id = Cliente.id;
 
 SELECT pedidos.id, produtos.nome, itens_pedido.preco
 FROM itens_pedido
 JOIN produtos ON itens_pedido.produto_id = produtos.id
 JOIN pedidos ON itens_pedido.pedido_id = pedidos.id;
+
+SELECT *
+FROM fornecedor;
+
+SELECT id, nome_empresa, cnpj, cidade, estado
+FROM fornecedor
+ORDER BY nome_empresa;
+
+SELECT *
+FROM usuario_adm;
+
+SELECT id, email, estoque_id, estoque_relatorio_id
+FROM usuario_adm
+ORDER BY id;
