@@ -7,6 +7,7 @@ CREATE TABLE Cliente(
 CREATE TABLE area_do_usuario(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   cliente_id INTEGER,
+  localizacao VARCHAR(100),
   nome VARCHAR(200),
   numero_de_telefone VARCHAR(20),
   cep CHAR(9),
@@ -17,7 +18,7 @@ CREATE TABLE area_do_usuario(
 
 CREATE TABLE categoria(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  nome VARCHAR(100) NOT NULL UNIQUE,
+  nome VARCHAR(100) NOT NULL UNIQUE cHECK (length(nome) > 0),
   descricao VARCHAR(500)
 );
 
@@ -77,7 +78,6 @@ CREATE TABLE pedidos(
   pagamento_id INTEGER,
   subtotal DECIMAL(6,2),
   frete DECIMAL(6,2),
-  localização VARCHAR(100),
   status_id INTEGER NOT NULL DEFAULT 1,
   FOREIGN KEY (cliente_id) REFERENCES Cliente(id),
   FOREIGN KEY (pagamento_id) REFERENCES forma_de_pagamento(id),
@@ -89,7 +89,7 @@ CREATE TABLE itens_pedido(
   pedido_id INTEGER,
   produto_id INTEGER,
   quantidade INT,
-  preco DECIMAL(6,2),
+  preco REAL CHECK (preco >=10),
   FOREIGN KEY (pedido_id) REFERENCES pedidos(id),
   FOREIGN KEY (produto_id) REFERENCES produtos(id)
 );
@@ -242,6 +242,16 @@ INSERT INTO fornecedor ( nome_empresa, cnpj, telefone, email, endereco, cidade, 
 VALUES
 ('Tech Supply LTDA', '12.345.678/0001-90', '11987654321', 'contato@techsupply.com', 'Rua das Flores, 123', 'São Paulo', 'SP', '01001-000'),
 ('Distribuidora Alfa', '98.765.432/0001-10', '21999887766', 'vendas@alfa.com.br', 'Av. Central, 500', 'Rio de Janeiro', 'RJ', '20040-020');
+ 
+ -- CLIENTES
+ 
+SELECT email, numero
+FROM Cliente
+WHERE email = 'giovana@gmail.com';
+
+SELECT email, numero
+FROM Cliente
+WHERE numero = '11981545512';
 
 SELECT c.email, c.numero AS Cliente
 FROM Cliente c;
@@ -285,3 +295,24 @@ FROM usuario_adm;
 SELECT id, email, estoque_id, estoque_relatorio_id
 FROM usuario_adm
 ORDER BY id;
+
+
+-- produtos
+CREATE INDEX idx_produtos_nome ON produtos(nome);
+CREATE INDEX idx_produtos_categoria_id ON produtos(categoria_id);
+
+-- fornecedor
+CREATE INDEX idx_fornecedor_cnpj ON fornecedor(cnpj);
+CREATE INDEX idx_fornecedor_nome_empresa ON fornecedor(nome_empresa);
+
+-- pedidos
+CREATE INDEX idx_pedidos_cliente_id ON pedidos(cliente_id);
+CREATE INDEX idx_pedidos_pagamento_id ON pedidos(pagamento_id);
+
+-- itens_pedido
+CREATE INDEX idx_itens_pedido_pedido_id ON itens_pedido(pedido_id);
+CREATE INDEX idx_itens_pedido_produto_id ON itens_pedido(produto_id);
+
+-- estoque
+CREATE INDEX idx_estoque_usuario_adm_id ON estoque(usuario_adm_id);
+CREATE INDEX idx_estoque_produto_id ON estoque(produto_id);
