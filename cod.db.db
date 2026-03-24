@@ -44,7 +44,7 @@ CREATE TABLE estoque(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   produto_id INTEGER,
   usuario_adm_id INTEGER,
-  quantidade INT,
+  quantidade_estoque INT,
   FOREIGN KEY (produto_id) REFERENCES produtos(id),
   FOREIGN KEY (usuario_adm_id) REFERENCES usuario_adm(id)
 );
