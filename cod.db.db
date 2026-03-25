@@ -26,7 +26,7 @@ CREATE TABLE produtos(
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   nome VARCHAR(500) NOT NULL,
   valor DECIMAL(6,2) NOT NULL,
-  tamanho VARCHAR(1),
+  tamanho VARCHAR(2),
   categoria_id INTEGER NOT NULL,
   cor VARCHAR(100),
   FOREIGN KEY (categoria_id) REFERENCES categoria(id)
