@@ -27,7 +27,7 @@ class MovimentoEstoque:
     quantidade: int
     data_hora: str
 
-@dataclass
+
 class Compra:
     id: int
     produto_id: int
@@ -35,7 +35,7 @@ class Compra:
     total: float
     data_hora: str
 
-@dataclass
+
 class Cliente:
     id: int
     nome: str
@@ -46,7 +46,7 @@ class Cliente:
     senha: str
     numero_telefone: str
 
-@dataclass
+
 class Funcionario:
     id: int
     nome: str
