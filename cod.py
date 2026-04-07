@@ -7,7 +7,7 @@ class Fornecedor:
     nome_empresa: str
     cnpj: str
 
-@dataclass
+
 class Produto:
     id: int
     nome: str
@@ -20,7 +20,6 @@ class Produto:
     estoque: int
     fornecedor_id: int
 
-@dataclass
 class MovimentoEstoque:
     id: int
     produto_id: int
