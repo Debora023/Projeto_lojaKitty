@@ -29,6 +29,8 @@ CREATE TABLE IF NOT EXISTS  produtos(
   tamanho VARCHAR(2),
   categoria_id INTEGER NOT NULL,
   cor VARCHAR(100),
+
+
   FOREIGN KEY (categoria_id) REFERENCES categoria(id)
 );
 
@@ -316,3 +318,52 @@ CREATE INDEX idx_itens_pedido_produto_id ON itens_pedido(produto_id);
 -- estoque
 CREATE INDEX idx_estoque_usuario_adm_id ON estoque(usuario_adm_id);
 CREATE INDEX idx_estoque_produto_id ON estoque(produto_id);
+
+SELECT nome
+FROM area_do_usuario
+ORDER BY nome ASC;
+
+
+SELECT nome, valor AS preco
+FROM produtos
+ORDER BY valor DESC;
+
+
+SELECT *
+FROM pedidos
+ORDER BY id DESC;
+
+
+SELECT email AS funcionario
+FROM usuario_adm
+ORDER BY email DESC;
+
+
+SELECT p.nome, e.quantidade_estoque
+FROM estoque e
+JOIN produtos p ON p.id = e.produto_id
+ORDER BY e.quantidade_estoque ASC;
+
+
+SELECT nome
+FROM area_do_usuario
+ORDER BY nome ASC
+LIMIT 5 OFFSET 5;
+
+
+SELECT nome
+FROM area_do_usuario
+ORDER BY nome ASC
+LIMIT 3 OFFSET 2;
+
+
+SELECT *
+FROM pedidos
+ORDER BY id DESC
+LIMIT 10;
+
+
+SELECT nome_empresa
+FROM fornecedor
+ORDER BY nome_empresa ASC
+LIMIT 4;
